@@ -1,3 +1,51 @@
+"""
+:program:`autoneg_fcgi` :program:`autoneg_cgi`
+----------------------------------------------
+This is a simple (fast) CGI application that performs HTTP
+auto-negotiation and serves files staticly.
+
+It needs to know the following:
+
+  * mime_type -> extension mapping
+  * base directory to look for the files in the filesystem
+  * name of the script to strip from request URIs
+
+There is a default set of *mime_types* which might be good
+for some purposes but it will usually be desirable to put them
+in a configuration file.
+
+If you have a file called *conf.py* with::
+
+  { "mime_types" : [ ("text/plain", ["txt"]), ("text/html", ["html"]) ] }
+
+And then run the cgi with::
+
+  % autoneg_cgi -c conf.py
+
+It will look for text files with the extension .txt and html
+files with the extension .html.
+
+Autonegotiation is done by first taking into account the client's 
+preferences as expressed in the HTTP Accept header and then the
+server's preferences as configured.
+
+Parameters such as *base* and *script* may be configured either
+in the configuration file or passed on the command line.
+
+Running a fast-cgi service can be done with *spawn-fcgi* which
+should be available for most operating systems. A content
+negotiation layer over /var/www might be started with
+
+  % spawn-fcgi -P /tmp/test.pid -s /tmp/test.sock -M 0666 \
+    -- autoneg_fcgi -c conf.py -b /var/www
+
+And then the web server would be configured to pass requests
+which it couldn't handle to this script over the */tmp/test.sock*
+socket.
+"""
+
+
+
 __all__ = ['AutoNeg']
 
 from pprint import pformat
@@ -11,7 +59,7 @@ from autoneg.accept import negotiate
 BUFSIZ = 4096
 
 class AutoNeg(object):
-    opt_parser = OptionParser(usage="%prog options")
+    opt_parser = OptionParser(usage=__doc__)
     opt_parser.add_option("-c", "--config",
                           dest="config",
                           default=None,
