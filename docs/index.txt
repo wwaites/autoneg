@@ -15,6 +15,10 @@ etc variants of a document and save them to the filesystem
 to be served directly rather than relying on complicated
 databases or middleware.
 
+  * Download: http://pypi.python.org/pypi/autoneg
+  * Documentation: http://packages.python.org/autoneg
+  * GIT Repository: http://github.com/wwaites/autoneg
+
 Scripts
 -------
 
