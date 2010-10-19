@@ -166,4 +166,4 @@ class AutoNeg(object):
     406 Not Acceptable
 
     The requested resource cound not be found in an acceptable form\n\n"""
-        yield pformat(environ)
+        #yield pformat(environ)
