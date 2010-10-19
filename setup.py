@@ -10,7 +10,7 @@ def readme():
 
 setup(name='autoneg',
     version=version,
-    description="Simply HTTP content auto-negotiation CGI",
+    description="Simple HTTP content auto-negotiation CGI",
     long_description=readme(),
     classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords='',
