@@ -1,0 +1,7 @@
+include MANIFEST.in
+include README.txt
+include setup.py
+include setup.cfg
+recursive-include autoneg *.py
+recursive-include docs *.txt
+recursive-include examples *.py
