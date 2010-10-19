@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.2'
+version = '0.1.3'
 
 def readme():
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +16,7 @@ setup(name='autoneg',
     keywords='',
     author='William Waites',
     author_email='ww@styx.org',
-    url='http://packages.python.org/autoneg',
+    url='http://river.styx.org/~ww/2010/10/autoneg/',
     license='BSD',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
