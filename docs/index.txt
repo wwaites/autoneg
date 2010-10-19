@@ -1,5 +1,5 @@
-CGI Content Autonegotiation
-===========================
+Simple Content Autonegotiation (F)CGI
+=====================================
 
 This is a simple (Fast)CGI application that performs HTTP
 auto-negotiation and serves files staticly. It can be installed
@@ -18,6 +18,13 @@ databases or middleware.
   * Download: http://pypi.python.org/pypi/autoneg
   * Documentation: http://packages.python.org/autoneg
   * GIT Repository: http://github.com/wwaites/autoneg
+
+This work was sponsored by the `Open Knowledge Foundation`_
+for use in
+
+  * `Bibliographica`_ and `OpenBiblio`_
+  * `CKAN`_
+  * `LOD2`_
 
 Scripts
 -------
@@ -48,3 +55,10 @@ And then the script could be launched with a command like::
 the *try_files* means that if the file exists on disk it will
 be served correctly. Otherwise the request will be passed 
 internally to the autonegotiation service.
+
+.. _Open Knowledge Foundation: http://okfn.org/
+.. _Bibliographica: http://bibliographica.org/
+.. _OpenBiblio: http://openbiblio.net/
+.. _CKAN: http://ckan.net/
+.. _LOD2: http://lod2.eu/
+

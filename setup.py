@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.3'
+version = '0.1.4'
 
 def readme():
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -10,7 +10,7 @@ def readme():
 
 setup(name='autoneg',
     version=version,
-    description="Simple HTTP content auto-negotiation CGI",
+    description="Simple Content Autonegotiation (F)CGI",
     long_description=readme(),
     classifiers=[], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     keywords='',
