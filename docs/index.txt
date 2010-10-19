@@ -1,0 +1,46 @@
+CGI Content Autonegotiation
+===========================
+
+This is a simple (Fast)CGI application that performs HTTP
+auto-negotiation and serves files staticly. It can be installed
+in the usual way with one of::
+
+    % pip install autoneg
+    % easy_install autoneg
+
+It is intended to facilitate serving of different variants
+of an HTTP resource according to the requested content type.
+In this way one can pre-render RDF/XML, N3, HTML, plain text,
+etc variants of a document and save them to the filesystem
+to be served directly rather than relying on complicated
+databases or middleware.
+
+Scripts
+-------
+
+.. automodule:: autoneg.app
+
+NGINX Configuration
+-------------------
+
+Example configuration for a global installation::
+
+        location / {
+            index index.html index.htm
+            try_files $uri $uri/ /autoneg$uri;
+            autoindex on;
+        }
+
+        location ~ ^/autoneg {
+            fastcgi_pass   unix:/var/run/autoneg.sock;
+            include        fastcgi_params;
+        }
+
+And then the script could be launched with a command like::
+
+        % spawn-fcgi -P /var/run/autoneg.pid -s /var/run/autoneg.sock -M 0666 \
+            -- autoneg_fcgi -c conf.py -b /var/www
+
+the *try_files* means that if the file exists on disk it will
+be served correctly. Otherwise the request will be passed 
+internally to the autonegotiation service.

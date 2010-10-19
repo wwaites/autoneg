@@ -1,10 +1,9 @@
 """
-:program:`autoneg_fcgi` :program:`autoneg_cgi`
-----------------------------------------------
-This is a simple (fast) CGI application that performs HTTP
-auto-negotiation and serves files staticly.
+:program:`autoneg_fcgi`
 
-It needs to know the following:
+:program:`autoneg_cgi`
+
+The script need to know the following:
 
   * mime_type -> extension mapping
   * base directory to look for the files in the filesystem
@@ -119,7 +118,7 @@ class AutoNeg(object):
                 raise
 
     def get_autonegotiated(self, environ, start_response, method):
-        path = environ.get("PATH_INFO", "/")
+        path = environ.get("DOCUMENT_URI", "/")
 
         script_name = self.config["script"]
         if path.startswith(script_name):
@@ -167,3 +166,4 @@ class AutoNeg(object):
     406 Not Acceptable
 
     The requested resource cound not be found in an acceptable form\n\n"""
+        yield pformat(environ)
