@@ -47,7 +47,6 @@ socket.
 
 __all__ = ['AutoNeg']
 
-from pprint import pformat
 from traceback import format_exc
 from optparse import OptionParser
 from ConfigParser import ConfigParser
@@ -143,6 +142,7 @@ class AutoNeg(object):
                         headers = [
                             ('Content-Type', content_type),
                             ('Content-Length', "%s" % st.st_size),
+                            ('Content-Location', os.path.basename(fname)),
                             ('Last-Modified', time.strftime("%a, %d %b %Y %H:%M:%S GMT",
                                                             time.gmtime(st.st_mtime))),
                             ('Vary', 'Accept'),
