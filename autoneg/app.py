@@ -145,6 +145,7 @@ class AutoNeg(object):
                             ('Content-Length', "%s" % st.st_size),
                             ('Last-Modified', time.strftime("%a, %d %b %Y %H:%M:%S GMT",
                                                             time.gmtime(st.st_mtime))),
+                            ('Vary', 'Accept'),
                             ('ETag', '%s' % st.st_mtime),
                             ]
                         start_response('200 OK', headers)
