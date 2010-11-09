@@ -53,6 +53,7 @@ from optparse import OptionParser
 from ConfigParser import ConfigParser
 import os, time
 import logging
+from glob import glob
 
 from autoneg.accept import negotiate
 
@@ -203,19 +204,46 @@ class AutoNeg(object):
                     except KeyError:
                         continue
 
-        log.warn("%s %s %s with %s" % (environ.get("REMOTE_ADDR"),
-                                       environ.get("REQUEST_METHOD"),
-                                       environ.get("DOCUMENT_URI", "/"),
-                                       accept))
-        log.debug("%s %s %s environ:\n%s" % (environ.get("REMOTE_ADDR"), 
-                                             environ.get("REQUEST_METHOD"),
-                                             environ.get("DOCUMENT_URI", "/"),
-                                             pformat(environ)))
+        matches = glob(path + ".*")
+        if matches:
+            log.warn("%s %s %s with %s" % (environ.get("REMOTE_ADDR"),
+                                           environ.get("REQUEST_METHOD"),
+                                           environ.get("DOCUMENT_URI", "/"),
+                                           accept))
+            log.debug("%s %s %s environ:\n%s" % (environ.get("REMOTE_ADDR"), 
+                                                 environ.get("REQUEST_METHOD"),
+                                                 environ.get("DOCUMENT_URI", "/"),
+                                                 pformat(environ)))
 
-        start_response('406 Not Acceptable',
-                       [('Content-type', 'text/plain')])
-        yield """\
-    406 Not Acceptable
+            start_response('406 Not Acceptable',
+                           [('Content-type', 'text/html')])
+            yield """\
+<html>
+  <head><title>406 Not Acceptable</title></title>
+  <body>
+    <h1>406 Not Acceptable</h1>
+    <p>The requested resource cound not be found in an acceptable form.
+       Possible alternatives:</p>
+    <ul>
+"""
+            for m in matches:
+                fname = os.path.basename(m)
+                yield '      <li><a href="%s">%s</a></li>\n' % (fname, fname)
 
-    The requested resource cound not be found in an acceptable form\n\n"""
-        #yield pformat(environ)
+            yield """\
+    </ul>
+  </body>
+</html>
+"""
+        else:
+            start_response('404 Not Found',
+                           [('Content-type', 'text/html')])
+            yield """\
+<html>
+  <head><title>404 Not Found</title></head>
+  <body>
+    <h1>404 Not Found</h1>
+    <p>Sorry, couldn't find what you were looking for</p>
+  </body>
+</html>
+"""
