@@ -48,11 +48,15 @@ socket.
 __all__ = ['AutoNeg']
 
 from traceback import format_exc
+from pprint import pformat
 from optparse import OptionParser
 from ConfigParser import ConfigParser
 import os, time
+import logging
 
 from autoneg.accept import negotiate
+
+log = logging.getLogger("autoneg")
 
 BUFSIZ = 4096
 
@@ -76,6 +80,12 @@ class AutoNeg(object):
     opt_parser.add_option("-i", "--index",
                           dest="index",
                           help="index file to use (default: index)")
+    opt_parser.add_option("-l", "--logfile",
+                          dest="logfile", default=None,
+                          help="log to file")
+    opt_parser.add_option("-v", "--verbosity",
+                          dest="verbosity", default="info",
+                          help="log verbosity. one of debug, info, warning, error, critical")
     config = { 
         "mime_types" : [
             ("text/plain", ["txt"]),
@@ -84,6 +94,8 @@ class AutoNeg(object):
         "base": "/var/www",
         "script": "",
         "index": "index",
+        "loglevel": "info",
+        "logformat": "%(asctime)s %(levelname)s  [%(name)s] %(message)s",
         }
     def __init__(self):
         self.opts, self.args = self.opt_parser.parse_args()
@@ -100,6 +112,27 @@ class AutoNeg(object):
             self.config["script"] = self.opts.script
         if self.opts.index:
             self.config["index"] = self.opts.index
+        if self.opts.logfile:
+            self.config["logfile"] = self.opts.logfile
+        if self.opts.verbosity:
+            self.config["loglevel"] = self.opts.verbosity
+
+        ## set up logging
+        logcfg = { 
+            "format": self.config.get("logformat"),
+            }
+        if self.config.get("logfile"):
+            logcfg["filename"] = self.config.get("logfile")
+
+        levels = {
+            "debug": logging.DEBUG,
+            "info": logging.INFO,
+            "warning": logging.WARNING,
+            "error": logging.ERROR,
+            "critical": logging.CRITICAL
+            }
+        logcfg["level"] = levels.get(self.config.get("loglevel"), logging.NOTSET)
+        logging.basicConfig(**logcfg)
 
     def __call__(self, environ, start_response):
         try:
@@ -109,6 +142,15 @@ class AutoNeg(object):
                 return ['405 Method Not Allowed']
             return self.get_autonegotiated(environ, start_response, method)
         except:
+            log.error("%s %s %s exception:\n%s" % (environ.get("REMOTE_ADDR"), 
+                                                   environ.get("REQUEST_METHOD"),
+                                                   environ.get("DOCUMENT_URI", "/"),
+                                                   format_exc()))
+            log.error("%s %s %s environ:\n%s" % (environ.get("REMOTE_ADDR"), 
+                                                 environ.get("REQUEST_METHOD"),
+                                                 environ.get("DOCUMENT_URI", "/"),
+                                                 pformat(environ)))
+
             if self.opts.debug:
                 start_response('500 Internal Server Error',
                                [('Content-Type', 'text/plain; charset=utf-8')])
@@ -160,6 +202,15 @@ class AutoNeg(object):
                             yield "\n"
                     except KeyError:
                         continue
+
+        log.warn("%s %s %s with %s" % (environ.get("REMOTE_ADDR"),
+                                       environ.get("REQUEST_METHOD"),
+                                       environ.get("DOCUMENT_URI", "/"),
+                                       accept))
+        log.debug("%s %s %s environ:\n%s" % (environ.get("REMOTE_ADDR"), 
+                                             environ.get("REQUEST_METHOD"),
+                                             environ.get("DOCUMENT_URI", "/"),
+                                             pformat(environ)))
 
         start_response('406 Not Acceptable',
                        [('Content-type', 'text/plain')])
