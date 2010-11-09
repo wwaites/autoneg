@@ -2,7 +2,7 @@ __all__ = ['negotiate']
 
 from itertools import chain
 import re
-_q_re = re.compile("^(?P<ct>[^;]+)(;q=(?P<q>.*)){0,1}$")
+_q_re = re.compile("^(?P<ct>[^;]+)[ \t]*(;[ \t]*q=(?P<q>[0-9.]+)){0,1}$")
 
 def parseAccept(header):
     parsed = {}
