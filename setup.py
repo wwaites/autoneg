@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2'
+version = '0.3'
 
 def readme():
     dirname = os.path.dirname(os.path.abspath(__file__))
@@ -28,5 +28,7 @@ setup(name='autoneg',
         [console_scripts]
         autoneg_cgi=autoneg.command:autoneg_cgi
         autoneg_fcgi=autoneg.command:autoneg_fcgi
+        rdfan_cgi=autoneg.command:rdfan_cgi
+        rdfan_fcgi=autoneg.command:rdfan_fcgi
     """,
     )
