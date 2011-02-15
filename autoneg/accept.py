@@ -17,7 +17,7 @@ def parseAccept(header):
     qs.sort(lambda x,y: cmp(y,x))
     return chain.from_iterable(parsed[q] for q in qs)
 
-def matchAccept(cfg, req):
+def matchAccept(cfg, req, strict=False):
     seen = set()
     for ct in req:
         req_type, req_subtype = ct.split("/", 1)
@@ -25,11 +25,11 @@ def matchAccept(cfg, req):
             matched = False
             if req_type == cfg_type and req_subtype == cfg_subtype:
                 matched = True
-            elif req_type == "*" and req_subtype == cfg_subtype:
+            elif not strict and req_type == "*" and req_subtype == cfg_subtype:
                 matched = True
-            elif req_type == cfg_type and req_subtype == "*":
+            elif not strict and req_type == cfg_type and req_subtype == "*":
                 matched = True
-            elif req_type == "*" and req_subtype == "*":
+            elif not strict and req_type == "*" and req_subtype == "*":
                 matched = True
             if matched:
                 content_type = "%s/%s" % (cfg_type, cfg_subtype)
@@ -37,7 +37,7 @@ def matchAccept(cfg, req):
                     seen.add(content_type)
                     yield content_type, exts
 
-def negotiate(cfg, accept_header):
+def negotiate(cfg, accept_header, strict=False):
     req = parseAccept(accept_header)
-    candidates = matchAccept(cfg, req)
+    candidates = matchAccept(cfg, req, strict=strict)
     return candidates
