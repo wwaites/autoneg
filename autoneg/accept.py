@@ -20,7 +20,14 @@ def parseAccept(header):
 def matchAccept(cfg, req, strict=False):
     seen = set()
     for ct in req:
-        req_type, req_subtype = ct.split("/", 1)
+        if ct == "*": ## ugly hack for some really broken user agents
+            req_type, req_subtype = "*", "*"
+        else:
+            try:
+                req_type, req_subtype = ct.split("/", 1)
+            except ValueError:
+                ## invalid or unparseable
+                continue
         for cfg_type, cfg_subtype, exts in cfg:
             matched = False
             if req_type == cfg_type and req_subtype == cfg_subtype:
